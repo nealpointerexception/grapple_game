@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
-import com.nealpointer.game.utils.Constants;
+import com.nealpointer.game.blocks.GrappleSurface;
 import com.nealpointer.game.utils.Utils;
 
 public class Player extends Sprite{
@@ -15,9 +15,13 @@ public class Player extends Sprite{
     Fixture fixture;
     Joint distanceJoint;
     DistanceJointDef distanceJointDef;
+    GrappleSurface surface;
+    GrappleGun grappleGun;
 
 
-    boolean alive = true;
+    public boolean alive = true, jumped = false;
+    char facing = 'r';
+
     final float DENSITY = 20f, FRICTION = 0.5f, RESTITUTION = 0.2f;
     final float MAX_SPD = 0.6f;
 
@@ -44,41 +48,91 @@ public class Player extends Sprite{
         fixture.setUserData(this);
 
         body.setFixedRotation(true);
-
-
-
-
-
+        System.out.println(body.getPosition());
+        grappleGun = new GrappleGun(world, this);
 
     }
-    public void createGrappleJoint(World world, GrappleSurface surface){
+
+    public GrappleGun getGrappleGun() {
+        return grappleGun;
+    }
+
+    Vector2 tempPos;
+    public void queGrappleJoint(Vector2 pos){
+        tempPos = pos;
+    }
+    public void createGrappleJoint(Vector2 pos){
+        disconnectGrapple();
+        int mod = facing == 'r' ? 1 : -1;
+        surface = new GrappleSurface(body.getWorld(), pos.x*100, pos.y*100 , 10, 10);
+
         distanceJointDef = new DistanceJointDef();
         distanceJointDef.bodyA = body;
-        distanceJointDef.bodyB = surface.myBody;
-        float dist = (float) Math.abs(Math.sqrt(Math.pow(body.getPosition().x - surface.myBody.getPosition().x,2) + Math.pow(body.getPosition().y - surface.myBody.getPosition().y, 2)));
-        distanceJointDef.length = dist - 0.1f;
+        distanceJointDef.bodyB = surface.getBody();
+        float dist = (float) Math.abs(Math.sqrt(Math.pow(body.getPosition().x - surface.getBody().getPosition().x,2) + Math.pow(body.getPosition().y - surface.getBody().getPosition().y, 2)));
+        distanceJointDef.length = dist - 0.3f;
         // distanceJointDef.dampingRatio = 1;
         distanceJointDef.frequencyHz = 3;
-        distanceJoint = world.createJoint(distanceJointDef);
+        if (distanceJoint == null)
+            distanceJoint = body.getWorld().createJoint(distanceJointDef);
     }
 
 
-    public void disconnectGrapple(World world){
+    public void disconnectGrapple(){
         if(distanceJoint != null) {
-            world.destroyJoint(distanceJoint);
+            body.getWorld().destroyJoint(distanceJoint);
+            body.getWorld().destroyBody(surface.getBody());
             distanceJoint = null;
+        }
+    }
+
+    public void move(char dir){
+        facing = dir;
+        if (dir == 'r'){
+            if(body.getLinearVelocity().x < 0.5f){
+
+                body.applyLinearImpulse(new Vector2(0.15f, 0), body.getWorldCenter(), true);
+            }
+        }
+        else if(dir == 'l'){
+            if(body.getLinearVelocity().x > -0.5f){
+
+                body.applyLinearImpulse(new Vector2(-0.15f, 0), body.getWorldCenter(), true);
+            }
+        }
+        else{
+            System.out.println("Ooopsie doopsie");
         }
     }
 
     public void update(){
         setX(body.getPosition().x);
         setY(body.getPosition().y);
+        if(tempPos != null){
+            System.out.println(tempPos);
+            createGrappleJoint(tempPos);
+            tempPos = null;
+        }
+        grappleGun.update();
     }
     public void jump(){
-        body.applyLinearImpulse(new Vector2(0, .55f), body.getWorldCenter(), true);
+        if(!jumped) {
+            body.applyLinearImpulse(new Vector2(0, .55f), body.getWorldCenter(), true);
+            jumped = true;
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return "Player";
     }
 
     public Body getBody() {
         return body;
+    }
+
+    public char getFacing() {
+        return facing;
     }
 }

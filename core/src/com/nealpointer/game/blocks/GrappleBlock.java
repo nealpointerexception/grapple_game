@@ -1,4 +1,4 @@
-package com.nealpointer.game.objects;
+package com.nealpointer.game.blocks;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
@@ -27,10 +27,17 @@ public class GrappleBlock {
         fixtureDef.shape = boundingBox;
         fixtureDef.friction = 0.5f;
 
-        myBody.createFixture(fixtureDef);
+        myFixture = myBody.createFixture(fixtureDef);
+        myFixture.setUserData(this);
         myBody.setUserData(this);
     }
 
+    @Override
+    public String toString() {
+        return "GrappleBlock";
+    }
 
-
+    public Body getBody() {
+        return myBody;
+    }
 }

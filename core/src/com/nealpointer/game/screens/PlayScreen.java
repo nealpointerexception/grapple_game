@@ -15,9 +15,9 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.nealpointer.game.MainTester;
-import com.nealpointer.game.objects.GrappleBlock;
-import com.nealpointer.game.objects.GrappleSurface;
+import com.nealpointer.game.blocks.GrappleSurface;
 import com.nealpointer.game.objects.Player;
+import com.nealpointer.game.utils.B2DCollision;
 import com.nealpointer.game.utils.Constants;
 import com.nealpointer.game.utils.TiledMapParser;
 
@@ -27,6 +27,7 @@ public class PlayScreen implements Screen {
     boolean spritesLoaded = false;
     OrthographicCamera gameCam;
     FitViewport screenViewport;
+
 
 
     TiledMap tiledMap;
@@ -48,6 +49,9 @@ public class PlayScreen implements Screen {
         dDebugRenderer = new Box2DDebugRenderer();
 
 
+        gameWorld.setContactListener(new B2DCollision());
+
+
         mapLoader = new TmxMapLoader();
         tiledMap = mapLoader.load("gamemap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/Constants.PPM);
@@ -55,7 +59,7 @@ public class PlayScreen implements Screen {
 
         TiledMapParser.parseMap(tiledMap, gameWorld);
 
-        tempHook = new GrappleSurface(gameWorld, 120, 300, 10, 10);
+
 
 
         gameCam.position.set(screenViewport.getWorldWidth()/2f/Constants.PPM+1.2f, screenViewport.getWorldHeight()/2f/Constants.PPM + 2, 1);
@@ -72,7 +76,7 @@ public class PlayScreen implements Screen {
     @Override
     public void render(float delta) {
 
-        Gdx.gl.glClearColor(75f/255f, 155f/255f, 140f/255f, 1);
+        Gdx.gl.glClearColor(0/255f, 0/255f, 0/255f, 1); //75f/255f, 155f/255f, 140f/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
@@ -120,7 +124,7 @@ public class PlayScreen implements Screen {
     }
 
     public void handleInput(){
-        System.out.println(player.getBody().getLinearVelocity());
+       // System.out.println(player.getBody().getLinearVelocity());
 //        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 //            gameCam.position.x += 2/Constants.PPM;
 //        }
@@ -136,27 +140,36 @@ public class PlayScreen implements Screen {
 
 
         if(Gdx.input.isKeyPressed(Input.Keys.D)){
-            if(player.getBody().getLinearVelocity().x < 0.5f){
-
-                player.getBody().applyLinearImpulse(new Vector2(0.15f, 0), player.getBody().getWorldCenter(), true);
-            }
+            player.move('r');
 
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.A)){
-            if(player.getBody().getLinearVelocity().x > -0.5f){
+            player.move('l');
 
-                player.getBody().applyLinearImpulse(new Vector2(-0.15f, 0), player.getBody().getWorldCenter(), true);
-            }
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
             player.jump();
         }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)){
+
+        }
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
-            player.disconnectGrapple(gameWorld);
+
+            //player.disconnectGrapple();
+            player.getGrappleGun().shoot();
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
-            player.createGrappleJoint(gameWorld, tempHook);
+
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+
+            player.getGrappleGun().increaseAngle();
+            System.out.println(player.getGrappleGun().getAngle());
         }
+        else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+
+            player.getGrappleGun().decreaseAngle();
+            System.out.println(player.getGrappleGun().getAngle());
+        }
+
 
     }
 

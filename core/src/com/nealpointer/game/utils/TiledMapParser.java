@@ -5,7 +5,8 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
-import com.nealpointer.game.objects.Ground;
+import com.nealpointer.game.blocks.GrappleBlock;
+import com.nealpointer.game.blocks.Ground;
 
 public class TiledMapParser {
     private static final int GROUND_INDEX = 2;
@@ -19,10 +20,10 @@ public class TiledMapParser {
         }
 
         //grapple blocks
-//        for(MapObject object : map.getLayers().get(GRAPPLE_INDEX).getObjects().getByType(RectangleMapObject.class)) {
-//            Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
-//            new GrappleBlock(world, rectangle);
-//        }
+        for(MapObject object : map.getLayers().get(GRAPPLE_INDEX).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
+            new GrappleBlock(world, rectangle);
+        }
 
     }
 

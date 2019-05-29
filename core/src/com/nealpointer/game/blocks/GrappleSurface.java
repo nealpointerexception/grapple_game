@@ -1,4 +1,4 @@
-package com.nealpointer.game.objects;
+package com.nealpointer.game.blocks;
 
 import com.badlogic.gdx.physics.box2d.*;
 import com.nealpointer.game.utils.Utils;
@@ -25,5 +25,7 @@ public class GrappleSurface {
         myBody.createFixture(fixtureDef);
         myBody.setUserData(this);
     }
-
+    public Body getBody() {
+        return myBody;
+    }
 }
