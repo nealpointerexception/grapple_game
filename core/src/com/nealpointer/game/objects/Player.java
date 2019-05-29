@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.nealpointer.game.blocks.GrappleBlock;
-import com.nealpointer.game.blocks.GrappleSurface;
+
 import com.nealpointer.game.utils.Utils;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class Player extends Sprite{
     Body body, grappleSensor;
     private Joint distanceJoint = null;
-    private GrappleSurface surface;
+
     //private GrappleGun grappleGun;
 
 
@@ -21,7 +21,7 @@ public class Player extends Sprite{
     public ArrayList<GrappleBlock> grappleSurfaces;
     char facing = 'r';
 
-    final float DENSITY = 20f, FRICTION = 0.5f, RESTITUTION = 0.2f;
+    final float DENSITY = 20f, FRICTION = 0.5f, RESTITUTION = 0.2f, MAX_GRAPPLE_LEN = 1.5f, MIN_GRAPPLE_LEN = .90f;
     final float MAX_SPD = 0.6f;
 
     public Player(World world, float x, float y){
@@ -52,7 +52,7 @@ public class Player extends Sprite{
 
         CircleShape aoeCirc = new CircleShape();
         aoeCirc.setRadius(Utils.b2dUnits(80));
-        aoeCirc.setPosition(new Vector2(0, 0.6f));
+        aoeCirc.setPosition(new Vector2(0, 0.8f));
 
         FixtureDef grappleSensorFixDef = new FixtureDef();
         grappleSensorFixDef.shape = aoeCirc;
@@ -97,8 +97,14 @@ public class Player extends Sprite{
             distanceJointDef.bodyA = body;
             distanceJointDef.bodyB = closestBlock.getBody();
             float dist = Utils.calcBodyDistance(body, closestBlock.getBody());
-            distanceJointDef.length = dist - 0.3f;
-            // distanceJointDef.dampingRatio = 1;
+            if(dist > MAX_GRAPPLE_LEN){
+                dist = MAX_GRAPPLE_LEN;
+            }
+            else if(dist < MIN_GRAPPLE_LEN){
+                dist = MIN_GRAPPLE_LEN;
+            }
+            distanceJointDef.length = dist - 0.2f;
+            distanceJointDef.dampingRatio = 0.5f;
             distanceJointDef.frequencyHz = 3;
             if (distanceJoint == null)
                 distanceJoint = body.getWorld().createJoint(distanceJointDef);
@@ -144,7 +150,8 @@ public class Player extends Sprite{
 //            createGrappleJoint(tempPos);
 //            tempPos = null;
 //        }
-        System.out.println(grappleSurfaces);
+        //
+        // System.out.println(grappleSurfaces);
         //grappleGun.update();
     }
     public void jump(){

@@ -15,7 +15,6 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.nealpointer.game.MainTester;
-import com.nealpointer.game.blocks.GrappleSurface;
 import com.nealpointer.game.objects.Player;
 import com.nealpointer.game.utils.B2DCollision;
 import com.nealpointer.game.utils.Constants;
@@ -37,7 +36,6 @@ public class PlayScreen implements Screen {
     World gameWorld;
     Box2DDebugRenderer dDebugRenderer;
 
-    GrappleSurface tempHook;
 
     Player player;
     public PlayScreen(MainTester game){
@@ -64,7 +62,7 @@ public class PlayScreen implements Screen {
 
         gameCam.position.set(screenViewport.getWorldWidth()/2f/Constants.PPM+1.2f, screenViewport.getWorldHeight()/2f/Constants.PPM + 2, 1);
 
-        player = new Player(gameWorld, 120, 400);
+        player = new Player(gameWorld, 120, 150);
     }
 
 

@@ -16,7 +16,7 @@ public class B2DCollision implements ContactListener {
         Fixture fB = contact.getFixtureB();
 
         if(fA.getUserData() != null && fB.getUserData() != null) {
-            System.out.println(fA.getUserData().toString() + "" + fB.getUserData().toString());
+            //System.out.println(fA.getUserData().toString() + "" + fB.getUserData().toString());
             handlers.onContactBegin(fA.getUserData().toString() + "" + fB.getUserData().toString(), fA, fB);
         }
 
@@ -28,7 +28,7 @@ public class B2DCollision implements ContactListener {
         Fixture fB = contact.getFixtureB();
 
         if(fA.getUserData() != null && fB.getUserData() != null) {
-            System.out.println(fA.getUserData().toString() + "" + fB.getUserData().toString());
+            //System.out.println(fA.getUserData().toString() + "" + fB.getUserData().toString());
             handlers.onContactEnd(fA.getUserData().toString() + "" + fB.getUserData().toString(), fA, fB);
         }
 
