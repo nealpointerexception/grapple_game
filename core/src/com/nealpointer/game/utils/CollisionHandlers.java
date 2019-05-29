@@ -2,6 +2,7 @@ package com.nealpointer.game.utils;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.nealpointer.game.blocks.GrappleBlock;
 import com.nealpointer.game.objects.GrappleGun;
 import com.nealpointer.game.objects.Player;
 
@@ -18,11 +19,25 @@ public class CollisionHandlers {
         beginHandlerMap.put("PlayerGround", (a, b) -> handleGroundPlayer(b, a));
         beginHandlerMap.put("GrappleProjGrappleBlock", (a, b) -> createGrapple(a, b));
         beginHandlerMap.put("GrappleBlockGrappleProj", (a, b) -> createGrapple(b, a));
+        beginHandlerMap.put("GrappleAOEGrappleBlock", (a,b) -> addGrappleTarget(a, b));
+        beginHandlerMap.put("GrappleBlockGrappleAOE", (a,b) -> addGrappleTarget(b, a));
+
+        endHandlerMap.put("GrappleAOEGrappleBlock", (a,b) -> removeGrappleTarget(a, b));
+        endHandlerMap.put("GrappleBlockGrappleAOE", (a,b) -> removeGrappleTarget(b, a));
     }
 
     private void handleGroundPlayer(Fixture ground, Fixture player){
         ((Player)player.getUserData()).jumped = false;
 
+    }
+
+    public void addGrappleTarget(Fixture player, Fixture block){
+        if(!(((Player)player.getBody().getUserData()).grappleSurfaces.contains((GrappleBlock)block.getUserData())))
+            ((Player)player.getBody().getUserData()).grappleSurfaces.add((GrappleBlock)block.getUserData());
+    }
+
+    public void removeGrappleTarget(Fixture player, Fixture block){
+        ((Player)player.getBody().getUserData()).grappleSurfaces.remove((GrappleBlock)block.getUserData());
     }
 
     public void onContactBegin(String key, Fixture a, Fixture b) {

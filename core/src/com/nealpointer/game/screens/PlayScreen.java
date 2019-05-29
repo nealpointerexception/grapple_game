@@ -156,19 +156,24 @@ public class PlayScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
 
             //player.disconnectGrapple();
-            player.getGrappleGun().shoot();
+            if(!player.connected){
+                player.createGrappleJoint();
+            }
+            else if(player.connected){
+                player.disconnectGrapple();
+            }
         }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)){
-
-            player.getGrappleGun().increaseAngle();
-            System.out.println(player.getGrappleGun().getAngle());
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-
-            player.getGrappleGun().decreaseAngle();
-            System.out.println(player.getGrappleGun().getAngle());
-        }
+//
+//        if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+//
+//            player.getGrappleGun().increaseAngle();
+//            System.out.println(player.getGrappleGun().getAngle());
+//        }
+//        else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+//
+//            player.getGrappleGun().decreaseAngle();
+//            System.out.println(player.getGrappleGun().getAngle());
+//        }
 
 
     }

@@ -24,6 +24,13 @@ public class B2DCollision implements ContactListener {
 
     @Override
     public void endContact(Contact contact) {
+        Fixture fA = contact.getFixtureA();
+        Fixture fB = contact.getFixtureB();
+
+        if(fA.getUserData() != null && fB.getUserData() != null) {
+            System.out.println(fA.getUserData().toString() + "" + fB.getUserData().toString());
+            handlers.onContactEnd(fA.getUserData().toString() + "" + fB.getUserData().toString(), fA, fB);
+        }
 
     }
 
